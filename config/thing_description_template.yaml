@@ -1,0 +1,134 @@
+---
+'@context':
+  - https://www.w3.org/2019/wot/td/v1
+  - saref: https://w3id.org/saref#
+  - seas: https://w3id.org/seas#
+  - ns: http://data.nasa.gov/qudt/owl/unit#
+  - xml: http://www.w3.org/2001/XMLSchema#
+  - sapi: http://smart-api.io/ontology/1.0/smartapi#
+id: WoTMicrogrid-
+title: Microgrid
+discover:
+  url: https://microgrid.io/discover
+'@type': sapi:MicroGridManagementSystem
+securityDefinitions:
+  psk:
+    scheme: psk
+security:
+  - psk
+properties:
+  flexibility:
+    title: ResourceFlexibility
+    '@type': seas:AugmentationFlexibilityEvaluation
+    type: integer
+    minimum: 0
+    maximum: 100
+    unit: ns:KiloWatt
+    readOnly: true
+    properties:
+      services:
+        - seas:BalancingExecution
+        - seas:LoadShifting
+    forms:
+      - href: https://localhost:8080/mgms/properties/resourseflexibility
+      - contentType: application/ld+json
+      - op: observeproperty
+      - http:methodName:
+        - GET
+        - POST
+  connection:
+    '@type': seas:ElectricalConnection
+    type: object
+    readOnly: true
+    properties:
+      network:
+        '@type': seas:ElectricPowerDistributionNetwork
+        type: string
+        value: mv_oberrhein
+      distributiontransformer:
+        '@type': seas:ElectricPowerTransformer
+        type: string
+        value: MV/LV Transformer 12
+      connectionpoint:
+        '@type': seas:ElectricityMeter
+        type: number
+        value: 34
+    forms:
+      - href: https://localhost:443/mgms/properties/connection
+      - contentType: application/ld+json
+      - op: observeproperty
+      - http:methodName:
+        - GET
+        - POST
+actions:
+  flexibilityforecast:
+    '@type': seas:Forecast
+    input:
+      type: string
+      properties:
+        timeslot:
+          unit: xml:dateTimeTimestamp
+      required:
+        - timeslot
+    output:
+      type: number
+      unit: ns:KiloWatt
+    uriVariables:
+      timeslot:
+        '@type': xml:dateTime
+        type: string
+    forms:
+      - href: https://localhost:443/mgms/actions/fexibilityforecast/{timeslot}
+      - contentType: application/ld+json
+      - op: invokeaction
+      - http:methodName:
+        - POST
+  flexibilityservice:
+    '@type': seas:AncillaryService
+    input:
+      type: string
+      properties:
+        timeslot:
+          unit: xml:dateTimeTimestamp
+        service:
+          type: string
+          properties:
+            balancing:
+              '@type': seas:BalancingExecution
+            loadshifting:
+              '@type': seas:LoadShifting
+      required:
+        - timeslot
+        - service
+    output:
+      type: boolean
+    uriVariables:
+      timeslot:
+        '@type': xml:dateTime
+        type: string
+    forms:
+      - href: https://localhost:443/mgms/actions/reservenotification/{timeslot}
+      - contentType: application/ld+json
+      - op: invokeaction
+      - http:methodName:
+        - POST
+events:
+  offering:
+    '@type': seas:Offering
+    data:
+      type: string
+    uriVariables:
+      timeslot:
+        '@type': xml:dateTime
+        type: string
+    subscription:
+      type: object
+      properties:
+        subscriptionID:
+          type: string
+          readonly: true
+    forms:
+      - href: https:/mqtt.broker:8080/mgms/events/reserveverification/subscribe
+      - contentType: application/ld+json
+      - op: subscribeevent
+      - htv:methodName: POST

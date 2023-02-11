@@ -1,0 +1,40 @@
+---
+'@context':
+  - https://www.w3.org/2019/wot/td/v1
+  - saref: https://w3id.org/saref#
+  - seas: https://w3id.org/seas#
+  - ns: http://data.nasa.gov/qudt/owl/unit#
+  - xml: http://www.w3.org/2001/XMLSchema#
+  - sapi: http://smart-api.io/ontology/1.0/smartapi#
+id: urn:dev:ops:WoTVPP-
+title: Aggregator
+'@type': seas:VirtualPowerPlant
+securityDefinitions:
+  psk:
+    scheme: psk
+security:
+  - psk
+properties:
+  service:
+    type: string
+    '@type': seas:BalancingExecution
+  flexibility:
+    title: ResourceFlexibility
+    '@type': seas:AugmentationFlexibilityEvaluation
+    type: integer
+    minimum: 20.0
+    maximum: 100.0
+    unit: ns:KiloWatt
+  connection:
+    '@type': seas:ElectricalConnection
+    type: object
+    readOnly: true
+    properties:
+      network:
+        '@type': seas:ElectricPowerDistributionNetwork
+        type: string
+        value: mv_oberrhein
+      distributiontransformer:
+        '@type': seas:ElectricPowerTransformer
+        type: string
+        value: MV/LV Transformer 12

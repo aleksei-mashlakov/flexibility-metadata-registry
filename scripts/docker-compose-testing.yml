@@ -1,0 +1,47 @@
+version: '3'
+services:
+  master:
+    container_name: loadtesting
+    build:
+      context: .
+      dockerfile: docker_containers/loadtesting/Dockerfile
+    hostname: localhost
+    network_mode: host
+    ports:
+     - "8089:8089"
+    # volumes:
+    #   - ./docker_containers/loadtesting/app:/app
+    #   - ./config:/app/config
+    #   - ./platform:/app/platform
+    #command: -f /app/locustfile.py --master -H http://localhost:8089
+    env_file:
+      - docker_containers/loadtesting/locust.env
+  # master:
+  #   container_name: locust_master
+  #   build:
+  #     context: .
+  #     dockerfile: docker_containers/locustc/DockerfileMaster
+  #   hostname: localhost
+  #   network_mode: host
+  #   ports:
+  #    - "8089:8089"
+  #   volumes:
+  #     - ./docker_containers/locustc/app:/app
+  #     - ./config/:/app/config
+  #   #command: -f /app/locustfile.py --master -H http://localhost:8089
+  #   env_file:
+  #     - docker_containers/locustc/locust.env
+  # worker:
+  #   build:
+  #     context: .
+  #     dockerfile: docker_containers/locustc/DockerfileWorker
+  #   hostname: localhost
+  #   network_mode: host
+  #   volumes:
+  #     - ./docker_containers/locustc/app:/app
+  #     - ./config/:/app/config
+  #   #command: -f /app/locustfile.py --worker --master-host master
+  #   env_file:
+  #     - docker_containers/locustc/locust.env
+  #   depends_on:
+  #     - master

@@ -1,0 +1,6 @@
+databases:
+  redis:
+    host: 'localhost'
+    port: 6379
+    redisgraph:
+      network: 'mv_oberrhein'

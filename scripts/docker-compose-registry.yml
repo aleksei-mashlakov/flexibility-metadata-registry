@@ -1,0 +1,39 @@
+version: '3'
+services:
+    server:
+        container_name: server
+        build:
+          context: .
+          dockerfile: docker_containers/server/Dockerfile
+        hostname: localhost
+        network_mode: host
+        ports:
+          - '8084-8087:8084-8087'
+        restart: unless-stopped
+        env_file:
+          - docker_containers/server/server.env
+    redis:
+        image: redislabs/redismod
+        container_name: redis
+        hostname: redis
+        restart: always
+        ports:
+          - '6379:6379'
+    redisinsight:
+        image: redislabs/redisinsight:latest
+        container_name: redisinsight
+        ports:
+          - '8001:8001'
+    nginx:
+        container_name: nginx
+        build:
+          context: .
+          dockerfile: docker_containers/nginx/Dockerfile
+        restart: unless-stopped
+        ports:
+          - '443:443'
+        environment:
+          - NGINX_HOST=localhost
+          - NGINX_PORT=443
+        hostname: localhost
+        network_mode: host
